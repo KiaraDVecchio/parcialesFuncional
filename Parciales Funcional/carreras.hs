@@ -115,3 +115,12 @@ jetPack tiempo autoQueGatillo = afectarALosQueCumplen (== autoQueGatillo)
 
 {-Al aplicarse alterarVelocidad (\_ -> velocidad autoQueGatillo), se restaura la velocidad del auto 
 a su valor original.   -}
+
+
+
+
+
+
+
+
+
