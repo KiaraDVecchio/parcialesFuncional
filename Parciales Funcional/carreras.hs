@@ -117,6 +117,91 @@ jetPack tiempo autoQueGatillo = afectarALosQueCumplen (== autoQueGatillo)
 a su valor original.   -}
 
 
+------{-Punto 3-}------
+
+{-Queremos simular una carrera, para lo cual se provee una lista de eventos, que son funciones que permiten ir de un 
+estado de la carrera al siguiente, y el estado inicial de la carrera a partir del cual se producen dichos eventos. 
+Con esta información buscamos generar una “tabla de posiciones”, que incluye la información de en qué puesto quedó cada 
+auto asociado al color del auto en cuestión.  -}
+
+{-a. Desarrollar la función simularCarrera :: Carrera -> [Carrera -> Carrera] -> [(Int, Color)] que permita obtener la 
+tabla de posiciones a partir del estado final de la carrera, el cual se obtiene produciendo cada evento uno detrás del 
+otro, partiendo del estado de la carrera recibido.    -}
+
+type Eventos = Carrera -> Carrera 
+type Color = String 
+
+simularCarrera :: Carrera -> [Evento] -> [(Int, Color)]
+simularCarrera carrera eventos = (tablaDePosiciones . procesarEventos eventos) carrera --"carrera" es el estado final de la carrera
+
+tablaDePosiciones :: Carrera -> [(Int, Color)]
+tablaDePosiciones carrera = map (entradaDeTabla carrera) carrera
+
+entradaDeTabla :: Carrera -> Auto -> (Int, String)  --Devuelve una tupla con el puesto del auto y su color.
+entradaDeTabla carrera auto = (puesto auto carrera, color auto) 
+
+procesarEventos :: [Evento] -> Carrera -> Carrera  --Devuelve el estado final de la carrera tras aplicar todos los eventos.
+procesarEventos eventos carreraInicial = foldl (\carreraActual evento -> evento carreraActual)  carreraInicial eventos  
+
+
+{-b.i) correnTodos que hace que todos los autos que están participando de la carrera corran durante un tiempo indicado. -}
+
+correnTodos :: Number -> Evento
+correnTodos tiempo = map (correr tiempo)
+
+{-b.ii) usaPowerUp que a partir de un power up y del color del auto que gatilló el poder en cuestión, encuentre el auto 
+correspondiente dentro del estado actual de la carrera para usarlo y produzca los efectos esperados para ese power up. -}
+
+usaPowerUp :: PowerUp -> Color -> Evento
+usaPowerUp powerUp colorBuscado carrera = powerUp autoQueGatillaElPoder carrera
+    where autoQueGatillaElPoder = find ((== colorBuscado).color) carrera  --busca el auto en la carrera cuyo color coincide con colorBuscado.
+
+find :: (c -> Bool) -> [c] -> c --find toma un predicado ((== colorBuscado) . color)) y una lista, y devuelve el primer elemento de la lista que satisface el predicado.
+find cond = head . filter cond
+
+{-c. Mostrar un ejemplo de uso de la función simularCarrera con autos de colores rojo, blanco, azul y negro que vayan 
+inicialmente a velocidad 120 y su distancia recorrida sea 0, de modo que ocurran los siguientes eventos:
+- todos los autos corren durante 30 segundos
+- el azul usa el power up de jet pack por 3 segundos
+- el blanco usa el power up de terremoto
+- todos los autos corren durante 40 segundos
+- el blanco usa el power up de miguelitos que reducen la velocidad en 20
+- el negro usa el power up de jet pack por 6 segundos
+- todos los autos corren durante 10 segundos  -}
+
+ejemploDeUsoSimularCarrera =
+    simularCarrera autosDeEjemplo [
+        correnTodos 30,
+        usaPowerUp (jetPack 3) "azul",
+        usaPowerUp terremoto "blanco",
+        correnTodos 40,
+        usaPowerUp (miguelitos 20) "blanco",
+        usaPowerUp (jetPack 6) "negro",
+        correnTodos 10
+    ]
+
+autosDeEjemplo :: [Auto]
+autosDeEjemplo = map (\color -> Auto color 120 0) ["rojo", "blanco", "azul", "negro"]
+
+
+{-a. Si se quisiera agregar un nuevo power up, un misil teledirigido, que para poder activarlo se deba indicar el 
+color del auto al que se quiere impactar, ¿la solución actual lo permite o sería necesario cambiar algo de lo 
+desarrollado en los puntos anteriores? Justificar.   -}
+
+Se puede agregar sin problemas como una función más misilTeledirigido :: Color -> PowerUp, y usarlo como:
+usaPowerUp (misilTeledirigido "rojo") "azul" :: Evento
+
+{-b. Si una carrera se conformara por infinitos autos, ¿sería posible usar las funciones del punto 1b y 1c de modo 
+que terminen de evaluarse? Justificar.  --}
+
+vaTranquilo puede terminar sólo si el auto indicado no va tranquilo (en este caso por tener a alguien cerca, si las 
+condiciones estuvieran al revés, terminaría si se encuentra alguno al que no le gana).
+Esto es gracias a la evaluación perezosa, any es capaz de retornar True si se encuentra alguno que cumpla la condición 
+indicada, y all es capaz de retornar False si alguno no cumple la condición correspondiente. Sin embargo, no podría 
+terminar si se tratara de un auto que va tranquilo.
+
+puesto no puede terminar nunca porque hace falta saber cuántos le van ganando, entonces por más que se pueda tratar de 
+filtrar el conjunto de autos, nunca se llegaría al final para calcular la longitud.
 
 
 
