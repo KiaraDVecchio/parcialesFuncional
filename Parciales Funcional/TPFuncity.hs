@@ -28,7 +28,11 @@ azul :: Ciudad
 azul = Ciudad "Azul" 1832 ["Teatro español", "Parque municipal Sarmiento", "Costanera Cacique Catriel"] 190
 
 
+
+
 --Punto 1: Valor de una ciudad
+
+
 
 valorCiudad :: Ciudad -> Int
 valorCiudad ciudad
@@ -42,6 +46,7 @@ modificarCostoDeVida unaFuncion ciudad = ciudad {costoDeVida = unaFuncion . cost
 
 --Punto 2: Alguna atraccion copada - Ciudad sobria - Ciudad con nombre raro
 
+
 isVowel :: Char -> Bool
 isVowel character = character `elem` "aeiouAEIOU"
 
@@ -53,7 +58,6 @@ esCiudadSobria letrasMinimas ciudad = all ((>letrasMinimas) . length) (atraccion
 
 tieneNombreRaro :: Ciudad -> Bool
 tieneNombreRaro ciudad = (<5) . length . nombre $ ciudad
-
 
 --Punto 3:
 
@@ -72,6 +76,7 @@ crisis ciudad = modificarAtraccion (drop 1) . aplicarPorcentaje 0.9 $ ciudad
 
 modificarAtraccion :: ([Atraccion] -> [Atraccion]) -> Ciudad -> Ciudad
 modificarAtraccion funcion ciudad = ciudad {atraccionesPrincipales = funcion . atraccionesPrincipales $ ciudad}
+
 
 remodelacion :: Int -> Ciudad -> Ciudad
 remodelacion porcentaje ciudad = modificarCostoDeVida (\costoDeVida -> costoDeVida + costoDeVida * porcentaje `div` 100) $ ciudad { nombre = "New " ++ nombre ciudad }
