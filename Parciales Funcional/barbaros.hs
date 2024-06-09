@@ -1,4 +1,4 @@
-import Text.Show.Functions
+import Text.Show.Functions ()
 import Data.Char (toUpper)
 
 data Barbaro = Barbaro {
