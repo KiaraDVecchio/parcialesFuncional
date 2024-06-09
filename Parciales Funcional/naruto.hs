@@ -1,10 +1,10 @@
-import Text.Show.Functions 
+import Text.Show.Functions ()
 
 data Ninja = Ninja {
-    nombre :: String,
-    herramientas :: [Herramienta],
-    jutsus :: ,
-    rango :: Int
+  nombre       :: String,
+  herramientas :: [Herramienta],
+  jutsus       :: [Jutsu],
+  rango        :: Int
 } deriving Show
 
 type Herramienta = (String, Int)
