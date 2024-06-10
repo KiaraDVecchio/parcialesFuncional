@@ -43,7 +43,7 @@ cantidadDeHerramientas = sum . map snd . herramientas  --herramientas devuelve l
 ella y no debe figurar más entre sus pertenencias.  -}
 
 usarHerramienta :: String -> Ninja -> Ninja  -- Elimina una herramienta específica del inventario de un ninja.
-usarHerramienta unaHerramienta unNinja = mapHerramientas (filter ((/= unNombreDeHerramienta) . nombreHerramienta)) unNinja
+usarHerramienta unaHerramienta unNinja = mapHerramientas (filter ((/= unaHerramienta) . nombreHerramienta)) unNinja
 --deja en la lista las herramientas que NO coinciden con la herramienta dada, /= significa ´distinto´
 
 
